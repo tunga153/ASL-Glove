@@ -1,0 +1,1 @@
+invert rx and tx bluetooth to board
