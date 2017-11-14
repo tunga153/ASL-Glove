@@ -1,6 +1,3 @@
-#include <SoftwareSerial.h>
-SoftwareSerial mySerial(4, 2);
-
 String message; //string that stores the incoming message
 
 void setup()
