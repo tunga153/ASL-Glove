@@ -53,6 +53,7 @@ void loop()
   Serial.print(String(","));
   Serial.print(String(getBinary(FLEX_PIN_PINKY_TOP)));
   Serial.print(String(","));
+  Serial.print(String(3));
   
   
   
@@ -61,7 +62,7 @@ void loop()
   Serial.println();
 
 
-  delay(1000);
+  delay(500);
 }
 
 int getBinary(int pin)
