@@ -59,12 +59,14 @@ def main():
     while 1:
         try:
             ser = serial.Serial('/dev/cu.HC-06-DevB', 9600, timeout=0.5)
+            print "\nBluetooth Connected\n"
             break
         except serial.serialutil.SerialException:
             time.sleep(1)
             print "Error connecting... Trying again"
     while 1:
         try:
+            raw_input("")
             temp = ser.readline()
             tempArr = temp.split(",")
             tempArr = tempArr[:len(tempArr)-1]
@@ -76,7 +78,7 @@ def main():
             dataDF = pd.DataFrame(data=serialData)
             dataDF = dataDF.transpose()
             preds = trainingSignals.target_names[clf.predict(dataDF)]
-            print tempArr
+            #print tempArr
             print preds[0]
             print ""
             #time.sleep(0.5)
