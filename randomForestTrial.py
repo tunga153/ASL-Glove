@@ -38,7 +38,7 @@ def main():
     print('Number of observations in the test data:',len(test))
 
     # Create a list of the feature column's names
-    features = df.columns[:8]
+    features = df.columns[:10]
 
     #need to integerize the Letter Names of the classes (0-25 A-Z)
     y = pd.factorize(train['letters'])[0]
@@ -57,7 +57,7 @@ def main():
     #From here on, loop forever reading data from the serial to use as "test" data
     while 1:
         try:
-            ser = serial.Serial('/dev/cu.HC-06-DevB', 9600, timeout=0)
+            ser = serial.Serial('/dev/cu.HC-06-DevB', 9600, timeout=0.5)
             break
         except serial.serialutil.SerialException:
             time.sleep(1)
@@ -67,28 +67,29 @@ def main():
             temp = ser.readline()
             tempArr = temp.split(",")
             tempArr = tempArr[:len(tempArr)-1]
-            if len(tempArr) != 8:
-              time.sleep(0.5)
+            if len(tempArr) != 10:
+              #time.sleep(0.5)
               continue;
             x = np.array(tempArr)
             serialData = x.astype(np.float)
             dataDF = pd.DataFrame(data=serialData)
             dataDF = dataDF.transpose()
             preds = trainingSignals.target_names[clf.predict(dataDF)]
+            print tempArr
             print preds[0]
             print ""
-            time.sleep(0.5)
+            #time.sleep(0.5)
         except ValueError:
-            time.sleep(0.5)
+            #time.sleep(0.5)
             continue
         except serial.serialutil.SerialException:
-            time.sleep(0.5)
+            #time.sleep(0.5)
             ser = serial.Serial('/dev/cu.HC-06-DevB', 9600, timeout=0)
             print "Error connecting... Trying again"
             continue
 
 def loaddata():
-    """df=pd.read_csv('binary_train.csv', sep=',',header=None)
+    """df=pd.read_csv('resist_train.csv', sep=',',header=None)
     print(df.values)
     temp = np.hsplit(df.values,np.array([3,6]))
 
@@ -97,12 +98,12 @@ def loaddata():
     print(returnData['targets'])"""
     fdescr = "ASL glove training data"
     module_path = dirname(__file__)
-    data, target, target_names = load_data(module_path, 'binary_train.csv')
+    data, target, target_names = load_data(module_path, 'resist_train.csv')
     return sklearn.datasets.base.Bunch(data=data, target=target,
                  target_names=target_names,
                  DESCR=fdescr,
                  feature_names=['Thumb', 'Index1', 'Index2', 'Middle1', 'Middle2', 'Ring1', 'Ring2',
-                                'pinky'])
+                                'pinky','tiltleft','tiltright'])
 
 def load_data(module_path, data_file_name):
     """Loads data from module_path/data/data_file_name.
