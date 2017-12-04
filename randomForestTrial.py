@@ -1,3 +1,4 @@
+from __future__ import print_function
 import pandas as pd
 import numpy as np
 import sklearn.datasets
@@ -54,6 +55,7 @@ def main():
 
     pd.set_option('display.width', 500)
     print(pd.crosstab(test['letters'], preds, rownames=['Actual Letters'], colnames=['Predicted Letters']))
+    print("")
 
     #From here on, loop forever reading data from the serial to use as "test" data
     while 1:
@@ -62,7 +64,7 @@ def main():
             break
         except serial.serialutil.SerialException:
             time.sleep(1)
-            print "Error connecting... Trying again"
+            print("Error connecting... Trying again")
     while 1:
         try:
             temp = ser.readline()
@@ -76,9 +78,10 @@ def main():
             dataDF = pd.DataFrame(data=serialData)
             dataDF = dataDF.transpose()
             preds = trainingSignals.target_names[clf.predict(dataDF)]
-            print tempArr
-            print preds[0]
-            print ""
+            #print tempArr
+            print(preds[0])
+            #print(preds[0], end='')
+            print("")
             #time.sleep(0.5)
         except ValueError:
             #time.sleep(0.5)
@@ -86,7 +89,7 @@ def main():
         except serial.serialutil.SerialException:
             #time.sleep(0.5)
             ser = serial.Serial('/dev/cu.HC-06-DevB', 9600, timeout=0)
-            print "Error connecting... Trying again"
+            print("Error connecting... Trying again")
             continue
 
 def loaddata():

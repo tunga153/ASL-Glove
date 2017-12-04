@@ -53,7 +53,6 @@ void loop()
   Serial.print(String(","));
   Serial.println();
 
-
   delay(1000);
 }
 
