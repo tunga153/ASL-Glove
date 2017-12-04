@@ -52,6 +52,7 @@ def main():
     #Predict a character
     preds = trainingSignals.target_names[clf.predict(test[features])]
 
+    pd.set_option('display.width', 500)
     print(pd.crosstab(test['letters'], preds, rownames=['Actual Letters'], colnames=['Predicted Letters']))
 
     #From here on, loop forever reading data from the serial to use as "test" data
