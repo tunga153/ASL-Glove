@@ -66,7 +66,6 @@ def main():
             print "Error connecting... Trying again"
     while 1:
         try:
-            raw_input("")
             temp = ser.readline()
             tempArr = temp.split(",")
             tempArr = tempArr[:len(tempArr)-1]
@@ -75,6 +74,9 @@ def main():
               continue;
             x = np.array(tempArr)
             serialData = x.astype(np.float)
+            #serialData[1] = serialData[2] + 10000;
+            serialData[3] = serialData[3] + 6000;
+            #serialData[4] = serialData[3] - 11000;
             dataDF = pd.DataFrame(data=serialData)
             dataDF = dataDF.transpose()
             preds = trainingSignals.target_names[clf.predict(dataDF)]

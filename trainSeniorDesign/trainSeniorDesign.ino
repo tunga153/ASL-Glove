@@ -32,7 +32,7 @@ void loop()
   
   Serial.print(String(getResistorValue(FLEX_PIN_THUMB)));
   Serial.print(String(","));
-  Serial.print(String(getResistorValue(FLEX_PIN_POINTER_TOP)));
+  Serial.print(String(getResistorValue(FLEX_PIN_POINTER_TOP) + 19000));
   Serial.print(String(","));
   Serial.print(String(getResistorValue(FLEX_PIN_POINTER_MIDDLE)));
   Serial.print(String(","));
@@ -55,7 +55,7 @@ void loop()
   Serial.println();
 
 
-  delay(500);
+  delay(200);
 }
 
 float getResistorValue(int pin)
