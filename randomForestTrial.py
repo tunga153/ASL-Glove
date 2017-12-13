@@ -12,6 +12,7 @@ from collections import namedtuple
 from os import environ, listdir, makedirs
 from os.path import dirname, exists, expanduser, isdir, join, splitext
 
+
 def main():
     # Load scikit's random forest classifier library
     from sklearn.ensemble import RandomForestClassifier
@@ -23,41 +24,47 @@ def main():
     trainingSignals = loaddata()
 
     # Create a dataframe
-    df = pd.DataFrame(trainingSignals.data, columns=trainingSignals.feature_names)
+    df = pd.DataFrame(trainingSignals.data,
+                      columns=trainingSignals.feature_names)
 
-    #Populate the class names next to the variable data
-    df['letters'] = pd.Categorical.from_codes(trainingSignals.target, trainingSignals.target_names)
+    # Populate the class names next to the variable data
+    df['letters'] = pd.Categorical.from_codes(trainingSignals.target,
+                                              trainingSignals.target_names)
 
-    #the fun way of test data (uniform dist at 75%)
+    # the fun way of test data (uniform dist at 75%)
     df['is_train'] = np.random.uniform(0, 1, len(df)) <= .75
 
-    # Create two new dataframes, one with the training rows, one with the test rows
-    train, test = df[df['is_train']==True], df[df['is_train']==False]
+    # Create two new dataframes, one with the training rows
+    # one with the test rows
+    train, test = df[df['is_train']], df[NOT df['is_train']]
     # Show the number of observations for the test and training dataframes
     print('Number of observations in the training data:', len(train))
-    print('Number of observations in the test data:',len(test))
+    print('Number of observations in the test data:', len(test))
 
     # Create a list of the feature column's names
     features = df.columns[:10]
 
-    #need to integerize the Letter Names of the classes (0-25 A-Z)
+    # need to integerize the Letter Names of the classes (0-25 A-Z)
     y = pd.factorize(train['letters'])[0]
 
-    # Create a random forest Classifier. By convention, clf means 'Classifier'
+    # Create a random forest Classifier.
+    # n_jobs is the number of threads the classifier will use
     clf = RandomForestClassifier(n_jobs=4, random_state=0)
 
     # Train the Classifier on the letter data
     clf.fit(train[features], y)
 
-    #Predict a character
+    # Predict a character
     preds = trainingSignals.target_names[clf.predict(test[features])]
 
     pd.set_option('display.width', 500)
-    print(pd.crosstab(test['letters'], preds, rownames=['Actual Letters'], colnames=['Predicted Letters']))
+    print(pd.crosstab(test['letters'], preds, rownames=['Actual Letters'],
+                      colnames=['Predicted Letters']))
 
-    #From here on, loop forever reading data from the serial to use as "test" data
+    # From here on, inf loop reading data from the serial to use as "test" data
     while 1:
         try:
+            # Change this line to use on a non-mac device
             ser = serial.Serial('/dev/cu.HC-06-DevB', 9600, timeout=0.5)
             print "\nBluetooth Connected\n"
             break
@@ -70,28 +77,22 @@ def main():
             tempArr = temp.split(",")
             tempArr = tempArr[:len(tempArr)-1]
             if len(tempArr) != 10:
-              #time.sleep(0.5)
-              continue;
+                continue
             x = np.array(tempArr)
             serialData = x.astype(np.float)
-            #serialData[1] = serialData[2] + 10000;
-            serialData[3] = serialData[3] + 6000;
-            #serialData[4] = serialData[3] - 11000;
+            serialData[3] = serialData[3] + 6000
             dataDF = pd.DataFrame(data=serialData)
             dataDF = dataDF.transpose()
             preds = trainingSignals.target_names[clf.predict(dataDF)]
-            #print tempArr
             print preds[0]
             print ""
-            #time.sleep(0.5)
         except ValueError:
-            #time.sleep(0.5)
             continue
         except serial.serialutil.SerialException:
-            #time.sleep(0.5)
             ser = serial.Serial('/dev/cu.HC-06-DevB', 9600, timeout=0)
             print "Error connecting... Trying again"
             continue
+
 
 def loaddata():
     """df=pd.read_csv('resist_train.csv', sep=',',header=None)
@@ -105,10 +106,15 @@ def loaddata():
     module_path = dirname(__file__)
     data, target, target_names = load_data(module_path, 'resist_train.csv')
     return sklearn.datasets.base.Bunch(data=data, target=target,
-                 target_names=target_names,
-                 DESCR=fdescr,
-                 feature_names=['Thumb', 'Index1', 'Index2', 'Middle1', 'Middle2', 'Ring1', 'Ring2',
-                                'pinky','tiltleft','tiltright'])
+                                       target_names=target_names,
+                                       DESCR=fdescr,
+                                       feature_names=['Thumb', 'Index1',
+                                                      'Index2', 'Middle1',
+                                                      'Middle2', 'Ring1',
+                                                      'Ring2',
+                                                      'pinky', 'tiltleft',
+                                                      'tiltright'])
+
 
 def load_data(module_path, data_file_name):
     """Loads data from module_path/data/data_file_name.
@@ -146,4 +152,3 @@ def load_data(module_path, data_file_name):
 
 main()
 temp = loaddata()
-"""print(temp.data);"""
